@@ -1,0 +1,135 @@
+apply plugin: 'com.android.application'
+
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+android {
+    compileSdkVersion 25//编译代码的sdk版本
+    buildToolsVersion "25.0.0"//用来打包apk的build-tools版本
+    defaultConfig {
+        applicationId "com.rainy.yutingdemo"//包名，用来做唯一标识的id
+        minSdkVersion 14//程序兼容的最低Android版本
+        targetSdkVersion 23//你的应用程序希望运行的Android版本
+        versionCode 1//代码构建编号，打一次包就增加1
+        versionName "1.0.0"//是你对外发布时，用户看到的应用程序版本号，一般用“点分三个数”来命名
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+
+        // 默认是umeng的渠道
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "yuting"]
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs {
+        debug {
+            // No debug config
+        }
+
+        release {
+            storeFile file("../yuting.jks")
+            storePassword "liuyuting"
+            keyAlias "yutingdemo.rainy.com"
+            keyPassword "liuyuting"
+        }
+    }
+
+    buildTypes {
+        //除了定义下面两种类型，还能定义 internal 国内类型，external 国外类型等
+        debug {
+            //shrinkResources true // 是否去除无效的资源文件
+            minifyEnabled false//指不混淆代码
+            //下面这行指的是你的代码混淆规则
+            zipAlignEnabled false
+            manifestPlaceholders = [UMENG_KEY: "586b616cae1bf86ba7001386"]
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
+        }
+        release {
+            shrinkResources false // 是否去除无效的资源文件
+            minifyEnabled false
+            zipAlignEnabled false
+            manifestPlaceholders = [UMENG_KEY: "586b616cae1bf86ba7001386"]
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // 输出apk名称为boohee_v1.0_2015-01-15_wandoujia.apk
+                        def fileName = "YUTING_${defaultConfig.versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
+        }
+    }
+
+    //友盟多渠道打包
+    productFlavors {
+//        web {
+//            buildConfigField "String", "MAIN", '"https://a.dakaqi.cn/up/"'
+//            buildConfigField "String", "CLIENTID", '"1003"'
+//        }
+
+//        debugs {
+//            buildConfigField "String", "MAIN", '"http://test.dakaqi.cn:3030/up/"'
+//            buildConfigField "String", "CLIENTID", '"100009"'
+//        }
+//        _360 {}
+//        baidu {}
+//        xiaomi {}
+//        tencent {}
+//        taobao {}
+//        huawei {}
+//        samsung {}
+        GooglePlay {
+            manifestPlaceholders = [UMENG_CHANNEL: "GooglePlay"]
+        }
+        Baidu {
+            manifestPlaceholders = [UMENG_CHANNEL: "Baidu"]
+        }
+        Wandoujia {
+            manifestPlaceholders = [UMENG_CHANNEL: "Wandoujia"]
+        }
+        Xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL: "Xiaomi"]
+        }
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
+}
+
+///**
+// * dependencies闭包里几种基本的语法
+// * 1：compile fileTree(dir: 'libs', include: ['*.jar']),
+// * 指的是依赖libs下面所有的jar包，
+// * 你还可以指定具体的每一个jar包，
+// * 而不是采用*.jar通配符匹配的方式，例如compile files('libs/文件名.jar')；
+//
+// 2：compile 'com.android.support:appcompat-v7:22.2.1'，
+// 这种语法是通过包名：工程名：版本号的形式来依赖的，
+//
+// 3：testCompile 'junit:junit:4.12'，
+// 指的是测试时才会用到的依赖，
+// 这里一看就知道是指做单元测试时依赖junit。
+// */
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    testCompile 'junit:junit:4.12'
+
+    //添加友盟统计的依赖包
+    compile 'com.umeng.analytics:analytics:latest.integration'
+}
