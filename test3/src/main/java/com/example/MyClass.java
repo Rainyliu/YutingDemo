@@ -1,8 +1,7 @@
-package com.rainy;
+package com.example;
 
-public class DemoClass {
+public class MyClass {
     public static void main(String[] args){
         System.out.println("Hello Bye !!!");
     }
 }
-
