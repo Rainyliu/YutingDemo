@@ -19,6 +19,11 @@ android {
 
         // 默认是umeng的渠道
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "yuting"]
+
+//        compileOptions {
+//            sourceCompatibility JavaVersion.VERSION_1_8
+//            targetCompatibility JavaVersion.VERSION_1_8
+//        }
     }
 
     lintOptions {
@@ -132,4 +137,7 @@ dependencies {
 
     //添加友盟统计的依赖包
     compile 'com.umeng.analytics:analytics:latest.integration'
+
+    //添加okhttp依赖包
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
 }
