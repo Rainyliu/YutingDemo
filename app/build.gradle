@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 def releaseTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
@@ -26,11 +27,13 @@ android {
 //        }
     }
 
+    //使用lint来检查代码规范
     lintOptions {
         abortOnError false
     }
 
     signingConfigs {
+        //noinspection GroovyMissingReturnStatement
         debug {
             // No debug config
         }
@@ -140,4 +143,23 @@ dependencies {
 
     //添加okhttp依赖包
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
+
+    //添加谷歌约束控件(ConstraintLayout)扁平化布局依赖
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+
+    //Dagger2
+    compile 'com.google.dagger:dagger:2.6'
+    apt 'com.google.dagger:dagger-compiler:2.6'
+
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'io.reactivex:rxjava:1.2.5'
+    compile 'io.reactivex:rxandroid:1.2.1'
+
 }
